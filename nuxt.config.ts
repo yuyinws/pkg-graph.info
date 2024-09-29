@@ -1,7 +1,7 @@
 export default defineNuxtConfig({
   devtools: { enabled: true },
   future: {
-    compatibilityVersion: 4
+    compatibilityVersion: 4,
   },
   modules: [
     '@nuxt/ui',
@@ -15,6 +15,7 @@ export default defineNuxtConfig({
   eslint: {
     config: {
       standalone: false,
-    }
-  }
+    },
+  },
+  compatibilityDate: '2024-09-29',
 })

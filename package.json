@@ -11,14 +11,15 @@
     "lint": "eslint ."
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.21.1",
-    "@nuxt/eslint": "^0.3.13",
-    "@nuxt/ui": "^2.17.0",
-    "@vueuse/core": "^10.11.0",
-    "@vueuse/nuxt": "^10.11.0",
-    "eslint": "^9.5.0",
-    "nuxt": "^3.12.2",
+    "@antfu/eslint-config": "^3.7.3",
+    "@nuxt/eslint": "^0.5.7",
+    "@nuxt/ui": "^2.18.6",
+    "@vueuse/core": "^11.1.0",
+    "@vueuse/nuxt": "^11.1.0",
+    "eslint": "^9.11.1",
+    "nuxt": "^3.13.2",
     "nuxt-module-cli-shortcuts": "^0.0.4",
-    "unplugin-turbo-console": "^1.8.9"
+    "taze": "^0.17.2",
+    "unplugin-turbo-console": "^1.10.4"
   }
 }
