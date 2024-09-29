@@ -1,0 +1,24 @@
+{
+  "name": "nuxt-app",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^2.21.1",
+    "@nuxt/eslint": "^0.3.13",
+    "@nuxt/ui": "^2.17.0",
+    "@vueuse/core": "^10.11.0",
+    "@vueuse/nuxt": "^10.11.0",
+    "eslint": "^9.5.0",
+    "nuxt": "^3.12.2",
+    "nuxt-module-cli-shortcuts": "^0.0.4",
+    "unplugin-turbo-console": "^1.8.9"
+  }
+}
