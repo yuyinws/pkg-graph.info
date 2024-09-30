@@ -58,15 +58,15 @@ async function installPkg() {
   // writer.write('cd pkg && npm install vue\n')
 }
 
-onMounted(async () => {
-  if (!wc.webcontainerState) {
-    await wc.init
-    installPkg()
-  }
-  else {
-    installPkg()
-  }
-})
+// onMounted(async () => {
+//   if (!wc.webcontainerState) {
+//     await wc.init
+//     installPkg()
+//   }
+//   else {
+//     installPkg()
+//   }
+// })
 
 async function test() {
 
@@ -74,9 +74,9 @@ async function test() {
 </script>
 
 <template>
-  <div ref="root" class="w-full px-4 py-2 h-[15.5rem]" />
+  <div>
+    <div ref="root" class="w-full px-4 py-2 h-[15.5rem]" />
 
-  <button @click="test">
-    test
-  </button>
+    <Graph />
+  </div>
 </template>
