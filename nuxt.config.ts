@@ -11,6 +11,7 @@ export default defineNuxtConfig({
     'unplugin-turbo-console/nuxt',
     '@nuxt/eslint',
     '@vueuse/nuxt',
+    '@pinia/nuxt',
   ],
   eslint: {
     config: {
@@ -18,4 +19,14 @@ export default defineNuxtConfig({
     },
   },
   compatibilityDate: '2024-09-29',
+  nitro: {
+    routeRules: {
+      '/**': {
+        headers: {
+          'Cross-Origin-Embedder-Policy': 'require-corp',
+          'Cross-Origin-Opener-Policy': 'same-origin',
+        },
+      },
+    },
+  },
 })

@@ -17,12 +17,24 @@ importers:
       '@nuxt/ui':
         specifier: ^2.18.6
         version: 2.18.6(focus-trap@7.5.4)(magicast@0.3.5)(rollup@4.18.0)(vite@5.4.8(@types/node@20.12.12)(terser@5.31.0))(vue@3.5.10(typescript@5.4.5))(webpack-sources@3.2.3)
+      '@pinia/nuxt':
+        specifier: ^0.5.4
+        version: 0.5.4(magicast@0.3.5)(rollup@4.18.0)(typescript@5.4.5)(vue@3.5.10(typescript@5.4.5))(webpack-sources@3.2.3)
       '@vueuse/core':
         specifier: ^11.1.0
         version: 11.1.0(vue@3.5.10(typescript@5.4.5))
       '@vueuse/nuxt':
         specifier: ^11.1.0
         version: 11.1.0(magicast@0.3.5)(nuxt@3.13.2(@parcel/watcher@2.4.1)(@types/node@20.12.12)(encoding@0.1.13)(eslint@9.11.1(jiti@2.0.0))(ioredis@5.4.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.18.0)(terser@5.31.0)(typescript@5.4.5)(vite@5.4.8(@types/node@20.12.12)(terser@5.31.0))(webpack-sources@3.2.3))(rollup@4.18.0)(vue@3.5.10(typescript@5.4.5))(webpack-sources@3.2.3)
+      '@webcontainer/api':
+        specifier: ^1.3.0
+        version: 1.3.0
+      '@xterm/addon-fit':
+        specifier: 0.11.0-beta.65
+        version: 0.11.0-beta.65(@xterm/xterm@5.5.0)
+      '@xterm/xterm':
+        specifier: ^5.5.0
+        version: 5.5.0
       eslint:
         specifier: ^9.11.1
         version: 9.11.1(jiti@2.0.0)
@@ -32,9 +44,15 @@ importers:
       nuxt-module-cli-shortcuts:
         specifier: ^0.0.4
         version: 0.0.4(rollup@4.18.0)
+      pinia:
+        specifier: ^2.2.2
+        version: 2.2.2(typescript@5.4.5)(vue@3.5.10(typescript@5.4.5))
       taze:
         specifier: ^0.17.2
         version: 0.17.2
+      theme-vitesse:
+        specifier: ^0.8.3
+        version: 0.8.3
       unplugin-turbo-console:
         specifier: ^1.10.4
         version: 1.10.4(@babel/parser@7.25.6)(@nuxt/kit@3.13.2(magicast@0.3.5)(rollup@4.18.0)(webpack-sources@3.2.3))(@nuxt/schema@3.13.2(rollup@4.18.0)(webpack-sources@3.2.3))(esbuild@0.21.5)(rollup@4.18.0)(vite@5.4.8(@types/node@20.12.12)(terser@5.31.0))(vue@3.5.10(typescript@5.4.5))(webpack-sources@3.2.3)
@@ -1171,6 +1189,9 @@ packages:
     resolution: {integrity: sha512-HNjmfLQEVRZmHRET336f20H/8kOozUGwk7yajvsonjNxbj2wBTK1WsQuHkD5yYh9RxFGL2EyDHryOihOwUoKDA==}
     engines: {node: '>= 10.0.0'}
 
+  '@pinia/nuxt@0.5.4':
+    resolution: {integrity: sha512-nNEs2pq6+Ji5qIyRwmeD9LUdctL8aJ8QMVLTYxUc16cXEOcIIN+MSA8Xudsd0lVETYgEAROT5HiBHnOYRDY3yQ==}
+
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
@@ -1762,6 +1783,17 @@ packages:
 
   '@vueuse/shared@11.1.0':
     resolution: {integrity: sha512-YUtIpY122q7osj+zsNMFAfMTubGz0sn5QzE5gPzAIiCmtt2ha3uQUY1+JPyL4gRCTsLPX82Y9brNbo/aqlA91w==}
+
+  '@webcontainer/api@1.3.0':
+    resolution: {integrity: sha512-gnb5P7Qr7xIvOEiUUODhKG6o8i4ZpVFdoKdnggOnWYaGOTECM94PK3alTYifa9YIL304VJkH/liT+fbnKCXa+A==}
+
+  '@xterm/addon-fit@0.11.0-beta.65':
+    resolution: {integrity: sha512-q04TnazlqE4Adl/zGNGWOHatepRIbKfQmmmqyGEk+q0r/PjFUZHtPtK0JfMY5LlFst9FF16sB5jS99bgAj61tg==}
+    peerDependencies:
+      '@xterm/xterm': ^5.6.0-beta.65
+
+  '@xterm/xterm@5.5.0':
+    resolution: {integrity: sha512-hqJHYaQb5OptNunnyAnkHyM8aCjZ1MEIDTQu1iIbbTD/xops91NB5yq1ZK/dC2JDbVWtF23zUtl9JE2NqwT87A==}
 
   abbrev@1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
@@ -3931,6 +3963,18 @@ packages:
     resolution: {integrity: sha512-udgsAY+fTnvv7kI7aaxbqwWNb0AHiB0qBO89PZKPkoTmGOgdbrHDKD+0B2X4uTfJ/FT1R09r9gTsjUjNJotuog==}
     engines: {node: '>=0.10.0'}
 
+  pinia@2.2.2:
+    resolution: {integrity: sha512-ja2XqFWZC36mupU4z1ZzxeTApV7DOw44cV4dhQ9sGwun+N89v/XP7+j7q6TanS1u1tdbK4r+1BUx7heMaIdagA==}
+    peerDependencies:
+      '@vue/composition-api': ^1.4.0
+      typescript: '>=4.4.4'
+      vue: ^2.6.14 || ^3.3.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+      typescript:
+        optional: true
+
   pirates@4.0.6:
     resolution: {integrity: sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==}
     engines: {node: '>= 6'}
@@ -4623,6 +4667,10 @@ packages:
 
   text-table@0.2.0:
     resolution: {integrity: sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==}
+
+  theme-vitesse@0.8.3:
+    resolution: {integrity: sha512-+H/p9fxfuP+qZHNeqNNFSehygzC2TfVelRY4rmRg6diX/L97JfMZOE3YHlLpOsm8/AFxc/n6E6MY3+Hkz3G96Q==}
+    engines: {vscode: ^1.43.0}
 
   thenify-all@1.6.0:
     resolution: {integrity: sha512-RNxQH/qI8/t3thXJDwcstUO4zeqo64+Uy/+sNVRBx4Xn2OX+OZ9oP+iJnNFqplFra2ZUVeKCSa2oVWi3T4uVmA==}
@@ -6567,6 +6615,19 @@ snapshots:
       '@parcel/watcher-win32-ia32': 2.4.1
       '@parcel/watcher-win32-x64': 2.4.1
 
+  '@pinia/nuxt@0.5.4(magicast@0.3.5)(rollup@4.18.0)(typescript@5.4.5)(vue@3.5.10(typescript@5.4.5))(webpack-sources@3.2.3)':
+    dependencies:
+      '@nuxt/kit': 3.13.2(magicast@0.3.5)(rollup@4.18.0)(webpack-sources@3.2.3)
+      pinia: 2.2.2(typescript@5.4.5)(vue@3.5.10(typescript@5.4.5))
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - magicast
+      - rollup
+      - supports-color
+      - typescript
+      - vue
+      - webpack-sources
+
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
@@ -7190,6 +7251,14 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
+
+  '@webcontainer/api@1.3.0': {}
+
+  '@xterm/addon-fit@0.11.0-beta.65(@xterm/xterm@5.5.0)':
+    dependencies:
+      '@xterm/xterm': 5.5.0
+
+  '@xterm/xterm@5.5.0': {}
 
   abbrev@1.1.1: {}
 
@@ -9813,6 +9882,14 @@ snapshots:
 
   pify@2.3.0: {}
 
+  pinia@2.2.2(typescript@5.4.5)(vue@3.5.10(typescript@5.4.5)):
+    dependencies:
+      '@vue/devtools-api': 6.6.4
+      vue: 3.5.10(typescript@5.4.5)
+      vue-demi: 0.14.10(vue@3.5.10(typescript@5.4.5))
+    optionalDependencies:
+      typescript: 5.4.5
+
   pirates@4.0.6: {}
 
   pkg-types@1.1.1:
@@ -10575,6 +10652,8 @@ snapshots:
       source-map-support: 0.5.21
 
   text-table@0.2.0: {}
+
+  theme-vitesse@0.8.3: {}
 
   thenify-all@1.6.0:
     dependencies:
