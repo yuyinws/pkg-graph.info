@@ -18,6 +18,11 @@ export default defineNuxtConfig({
       standalone: false,
     },
   },
+  icon: {
+    clientBundle: {
+      scan: true,
+    },
+  },
   compatibilityDate: '2024-09-29',
   ssr: false,
   nitro: {
