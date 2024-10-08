@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type { ITheme } from '@xterm/xterm'
 import { FitAddon } from '@xterm/addon-fit'
-import Xterm from '@xterm/xterm'
+import * as Xterm from '@xterm/xterm'
 import themeDark from 'theme-vitesse/extra/xterm-vitesse-dark.json'
 import themeLight from 'theme-vitesse/extra/xterm-vitesse-light.json'
 import '@xterm/xterm/css/xterm.css'
 
 const wc = useWebcontainerStore()
-const { webcontainerStatus } = storeToRefs(useWebcontainerStore())
+const { status } = storeToRefs(useWebcontainerStore())
 const colorMode = useColorMode()
 const root = ref<HTMLDivElement>()
 
@@ -26,8 +26,7 @@ const theme = computed<ITheme>(() => {
       }
 })
 
-const { Terminal } = Xterm
-const terminal = new Terminal({
+const terminal = new Xterm.Terminal({
   customGlyphs: true,
   allowTransparency: true,
   theme: theme.value,
@@ -89,12 +88,13 @@ onMounted(async () => {
   }
   await wc.launchInstallProcess(pkg)
   await wc.launchCollectPkgProcess(pkg)
+  status.value = 'graph'
   await wc.lanuchInteractiveProgress()
 })
 </script>
 
 <template>
-  <Overlay :open="webcontainerStatus !== 'finish'">
+  <Overlay :open="status !== 'finish'">
     <div class="flex items-center justify-center h-full">
       <div class="flex flex-col w-[40rem] items-center justify-center h-full">
         <div class="bg-gray-300 w-full rounded-t-[.5rem] flex items-center justify-between">
@@ -106,23 +106,30 @@ onMounted(async () => {
             </div>
           </div>
 
-          <div v-if="webcontainerStatus === 'idle'" class="flex items-center">
+          <div v-if="status === 'idle'" class="flex items-center">
             <div class="text-gray-500 font-medium text-sm">
               Starting up
             </div>
             <UIcon name="i-eos-icons:three-dots-loading" class="relative top-[.25rem] text-gray-500 w-5 h-5" />
           </div>
 
-          <div v-if="webcontainerStatus === 'install'" class="flex items-center">
+          <div v-if="status === 'install'" class="flex items-center">
             <div class="text-gray-500 font-medium text-sm">
               npm install {{ pkg }}
             </div>
             <UIcon name="i-eos-icons:three-dots-loading" class="relative top-[.25rem] text-gray-500 w-5 h-5" />
           </div>
 
-          <div v-if="webcontainerStatus === 'analyse'" class="flex items-center">
+          <div v-if="status === 'analyse'" class="flex items-center">
             <div class="text-gray-500 font-medium text-sm">
               Analyzing {{ pkg }}
+            </div>
+            <UIcon name="i-eos-icons:three-dots-loading" class="relative top-[.25rem] text-gray-500 w-5 h-5" />
+          </div>
+
+          <div v-if="status === 'graph'" class="flex items-center">
+            <div class="text-gray-500 font-medium text-sm">
+              Generate graph
             </div>
             <UIcon name="i-eos-icons:three-dots-loading" class="relative top-[.25rem] text-gray-500 w-5 h-5" />
           </div>
@@ -136,5 +143,5 @@ onMounted(async () => {
     </div>
   </Overlay>
 
-  <Graph v-if="webcontainerStatus === 'finish'" />
+  <Graph v-if="['graph', 'finish'].includes(status)" />
 </template>

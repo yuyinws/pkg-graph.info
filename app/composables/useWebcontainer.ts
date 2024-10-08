@@ -5,7 +5,7 @@ import { defineStore } from 'pinia'
 
 export const useWebcontainerStore = defineStore('webcontainer', () => {
   const webcontainerInstance = shallowRef<Raw<WebContainer>>()
-  const webcontainerStatus = ref<'idle' | 'error' | 'install' | 'analyse' | 'finish'>('idle')
+  const status = ref<'idle' | 'error' | 'install' | 'analyse' | 'graph' | 'finish'>('idle')
   const error = shallowRef<{ message: string }>()
   let _promiseInit: Promise<void> | undefined
 
@@ -24,7 +24,7 @@ export const useWebcontainerStore = defineStore('webcontainer', () => {
   }
 
   async function launchInstallProcess(pkg: string) {
-    webcontainerStatus.value = 'install'
+    status.value = 'install'
     const installExitCode = await spawn('npm', ['install', pkg])
     if (installExitCode !== 0) {
       error.value = { message: `Unable to run npm install, exit as ${installExitCode}` }
@@ -36,7 +36,7 @@ export const useWebcontainerStore = defineStore('webcontainer', () => {
   }
 
   async function launchCollectPkgProcess(pkg: string) {
-    webcontainerStatus.value = 'analyse'
+    status.value = 'analyse'
     const installExitCode = await spawn('node', ['collect-pkg.mjs', pkg])
     if (installExitCode !== 0) {
       error.value = { message: `Unable to run npm install, exit as ${installExitCode}` }
@@ -44,7 +44,6 @@ export const useWebcontainerStore = defineStore('webcontainer', () => {
       return false
     }
 
-    webcontainerStatus.value = 'finish'
     return true
   }
 
@@ -63,7 +62,7 @@ export const useWebcontainerStore = defineStore('webcontainer', () => {
       }
       catch (error) {
         console.error(error)
-        webcontainerStatus.value = 'error'
+        status.value = 'error'
       }
     }
 
@@ -75,7 +74,7 @@ export const useWebcontainerStore = defineStore('webcontainer', () => {
       return _promiseInit
     },
     webcontainerInstance,
-    webcontainerStatus,
+    status,
     currentProcess,
     launchInstallProcess,
     launchCollectPkgProcess,

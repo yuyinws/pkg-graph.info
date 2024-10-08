@@ -1,36 +1,28 @@
 <script setup lang="ts">
+import type { Graph } from '~~/types/graph'
 import { Network } from 'vis-network'
 
-const networkRef = useTemplateRef('network')
+const networkRef = useTemplateRef('networkRef')
 
 const { webcontainerInstance } = useWebcontainerStore()
+const { status } = storeToRefs(useWebcontainerStore())
 
 onMounted(async () => {
   const data = await webcontainerInstance?.fs.readFile('./visData.json', 'utf-8')
-  const parsedData = JSON.parse(data!)
-
+  const parsedData = JSON.parse(data!) as Graph
   const getNodeColor = (level: number) => {
     const colors = [
-      '#06b6d4',
-      '#22d3ee',
-      '#a5f3fc',
+      '#22c55e',
+      '#4ade80',
+      '#86efac',
     ]
     const colorIndex = Math.min(level, colors.length - 1)
     const baseColor = colors[colorIndex]!
 
     const rgb = hexToRgb(baseColor)
-    return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${0.8})`
+    return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${level === 0 ? 0.6 : 0.5})`
   }
 
-  const getNodeSize = (level: number) => {
-    if (level === 0)
-      return { width: 200, height: 80 }
-    if (level === 1)
-      return { width: 180, height: 70 }
-    return { width: 150, height: 50 }
-  }
-
-  // 辅助函数：将十六进制颜色转换为 RGB
   function hexToRgb(hex: string) {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
     return result
@@ -42,34 +34,38 @@ onMounted(async () => {
       : { r: 0, g: 0, b: 0 }
   }
 
-  const rootNode = parsedData.nodes.find((node: any) => node.level === 0)
+  const rootNode = parsedData.nodes.find(node => node.level === 0)
 
-  const nodes = parsedData.nodes.map((node: any) => {
-    const size = getNodeSize(node.level)
+  const nodes = parsedData.nodes.filter(node => node.level! < 4).map((node) => {
     return {
       ...node,
       color: {
-        background: getNodeColor(node.level),
+        background: getNodeColor(node.level!),
       },
       shape: 'box',
-      ...size,
       font: {
-        size: node.level === 0 ? 30 : node.level === 1 ? 18 : 14,
+        size: node.level === 0 ? 26 : node.level === 1 ? 18 : 14,
         face: 'arial',
-        bold: node.level === 0 || node.level === 1,
+        color: node.level === 0 ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0.5)',
       },
+      borderWidth: node.level === 0 ? 2 : 1,
       margin: 12,
       fixed: node.level === 0,
       x: node.level === 0 ? 0 : undefined,
       y: node.level === 0 ? 0 : undefined,
+      shapeProperties: { borderDashes: node.level! < 2 ? [0, 0] : [2, 2] },
     }
   })
 
-  const network = new Network(networkRef.value!, { nodes, edges: parsedData.edges }, {
+  const network = new Network(networkRef.value!, { nodes: nodes as any, edges: parsedData.edges }, {
     nodes: {
       labelHighlightBold: false,
       shape: 'box',
       borderWidth: 0,
+      color: {
+        highlight: '#4ade80',
+        border: '#4ade80',
+      },
     },
     edges: {
       smooth: {
@@ -80,7 +76,7 @@ onMounted(async () => {
       width: 1,
       color: {
         color: '#d1d5db',
-        highlight: '#22d3ee',
+        highlight: '#4ade80',
       },
       hoverWidth: 0,
       arrows: {
@@ -108,15 +104,12 @@ onMounted(async () => {
         fit: true,
       },
     },
-    layout: {
-      improvedLayout: true,
-    },
   })
 
   network.on('stabilizationIterationsDone', () => {
-    network.setOptions({ physics: false })
+    network.setOptions({ physics: nodes.length <= 50 })
     if (rootNode) {
-      network.focus(rootNode.id, {
+      network.focus(rootNode.id!, {
         scale: 0.7,
         animation: {
           duration: 1000,
@@ -124,10 +117,12 @@ onMounted(async () => {
         },
       })
     }
+
+    status.value = 'finish'
   })
 })
 </script>
 
 <template>
-  <div ref="network" class="h-screen w-screen" />
+  <div ref="networkRef" class="h-screen w-screen" />
 </template>
