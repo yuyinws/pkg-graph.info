@@ -19,6 +19,7 @@ export default defineNuxtConfig({
     },
   },
   compatibilityDate: '2024-09-29',
+  ssr: false,
   nitro: {
     routeRules: {
       '/**': {
