@@ -1,9 +1,11 @@
 <script setup lang="ts">
-
+const isOpen = ref(true)
 </script>
 
 <template>
-  <div>
-    11
-  </div>
+  <Overlay v-model:open="isOpen">
+    <div class="flex items-center justify-center h-full">
+      <UIcon name="i-eos-icons:loading" class="w-8 h-8 text-gray-500" />
+    </div>
+  </Overlay>
 </template>

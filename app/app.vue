@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const wc = useWebcontainerStore()
 
-if (!wc.webcontainerState) {
+if (!wc.webcontainerInstance) {
   await wc.init
 }
 </script>
