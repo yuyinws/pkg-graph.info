@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { PkgMeta } from '~~/types/pkg'
 
-const { meta } = defineProps<{
+const { meta, maxLevel } = defineProps<{
   meta: PkgMeta | undefined
+  maxLevel: number
 }>()
 
 const route = useRoute()
@@ -25,6 +26,8 @@ const fundings = computed(() => {
 
   return meta.funding
 })
+
+const level = defineModel<number>('level')
 </script>
 
 <template>
@@ -78,7 +81,7 @@ const fundings = computed(() => {
 
     <UDivider />
 
-    <p class="text-xs text-gray-500 dark:text-gray-400">
+    <p class="text-sm font-semibold text-gray-500 dark:text-gray-400">
       Keywords ({{ meta.keywords?.length || 0 }})
     </p>
 
@@ -88,7 +91,7 @@ const fundings = computed(() => {
       </UBadge>
     </div>
 
-    <p class="text-xs text-gray-500 dark:text-gray-400">
+    <p class="text-sm font-semibold text-gray-500 dark:text-gray-400">
       Dependencies ({{ Object.keys(meta.dependencies || {}).length }})
     </p>
 
@@ -113,5 +116,14 @@ const fundings = computed(() => {
     </template>
 
     <UDivider />
+
+    <p class="text-sm font-bold text-gray-500 dark:text-gray-400">
+      Settings
+    </p>
+
+    <div class="flex flex-col w-full gap-4">
+      <span class="text-xs text-gray-500 dark:text-gray-400">Deep level ({{ `${level}/${maxLevel}` }})</span>
+      <URange v-model="level" class="flex-1" size="sm" :min="Math.min(2, maxLevel)" :max="maxLevel" />
+    </div>
   </div>
 </template>

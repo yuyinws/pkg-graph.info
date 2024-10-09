@@ -43,9 +43,12 @@ const edgesArray = Array.from(edges).map((edge, index) => ({
   to: edge.to,
 }))
 
+const maxLevel = Math.max(...nodesArray.map(node => node.level))
+
 const visData = {
   nodes: nodesArray,
   edges: edgesArray,
+  maxLevel,
 }
 
 writeFileSync(new URL('./visData.json', import.meta.url), JSON.stringify(visData, null, 2), 'utf-8')

@@ -1,5 +1,20 @@
 <script setup lang="ts">
 const { status } = storeToRefs(useWebcontainerStore())
+
+const route = useRoute()
+const pkg = (route.params.pkg as string[]).join('/')
+
+useSeoMeta({
+  title: `${pkg}'s package-graph`,
+})
+
+useServerSeoMeta({
+  ogTitle: `pkg-graph ｜ ${pkg}`,
+  twitterTitle: `pkg-graph ｜ ${pkg}`,
+  description: `${pkg}'s package-graph`,
+  ogDescription: `${pkg}'s package-graph`,
+  twitterCard: 'summary_large_image',
+})
 </script>
 
 <template>

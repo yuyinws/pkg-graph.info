@@ -7,7 +7,7 @@ const networkRef = useTemplateRef('networkRef')
 
 const { webcontainerInstance } = useWebcontainerStore()
 const { status } = storeToRefs(useWebcontainerStore())
-const network = ref<Network | null>(null)
+let network: Network | null = null
 
 const route = useRoute()
 const pkg = (route.params.pkg as string[]).join('/')
@@ -21,35 +21,36 @@ async function getPkgInfo(pkg: string) {
   pkgMetaData.value = JSON.parse(pkgInfo!) as PkgMeta
 }
 
-onMounted(async () => {
-  const parsedData = JSON.parse(visData!) as Graph
-  const getNodeColor = (level: number) => {
-    const colors = [
-      '#22c55e',
-      '#4ade80',
-      '#86efac',
-    ]
-    const colorIndex = Math.min(level, colors.length - 1)
-    const baseColor = colors[colorIndex]!
+const parsedData = JSON.parse(visData!) as Graph
 
-    const rgb = hexToRgb(baseColor)
-    return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${level === 0 ? 0.6 : 0.5})`
-  }
+function hexToRgb(hex: string) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  return result
+    ? {
+        r: Number.parseInt(result[1]!, 16),
+        g: Number.parseInt(result[2]!, 16),
+        b: Number.parseInt(result[3]!, 16),
+      }
+    : { r: 0, g: 0, b: 0 }
+}
 
-  function hexToRgb(hex: string) {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-    return result
-      ? {
-          r: Number.parseInt(result[1]!, 16),
-          g: Number.parseInt(result[2]!, 16),
-          b: Number.parseInt(result[3]!, 16),
-        }
-      : { r: 0, g: 0, b: 0 }
-  }
+function getNodeColor(level: number) {
+  const colors = [
+    '#22c55e',
+    '#4ade80',
+    '#86efac',
+  ]
+  const colorIndex = Math.min(level, colors.length - 1)
+  const baseColor = colors[colorIndex]!
 
-  const rootNode = parsedData.nodes.find(node => node.level === 0)
+  const rgb = hexToRgb(baseColor)
+  return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${level === 0 ? 0.6 : 0.5})`
+}
 
-  const nodes = parsedData.nodes.filter(node => node.level! < 4).map((node) => {
+const level = ref(2)
+
+function getNodes(_level: number): any {
+  return parsedData.nodes.filter(node => node.level! < _level).map((node) => {
     return {
       ...node,
       color: {
@@ -69,8 +70,41 @@ onMounted(async () => {
       shapeProperties: { borderDashes: node.level! < 2 ? [0, 0] : [2, 2] },
     }
   })
+}
 
-  network.value = new Network(networkRef.value!, { nodes: nodes as any, edges: parsedData.edges }, {
+const loading = ref(false)
+
+watch(level, async (value) => {
+  try {
+    loading.value = true
+    const nodes = getNodes(value)
+    const filteredEdges = parsedData.edges.filter(edge =>
+      nodes.some((node: any) => node.id === edge.from)
+      && nodes.some((node: any) => node.id === edge.to),
+    )
+    network?.setData({ nodes, edges: filteredEdges })
+
+    network?.setOptions({ physics: true })
+
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    network?.stabilize()
+
+    await new Promise(resolve => setTimeout(resolve, 1000))
+
+    network?.setOptions({ physics: false })
+  }
+  catch (error) {
+    console.error(error)
+  }
+  finally {
+    loading.value = false
+  }
+})
+
+onMounted(async () => {
+  const rootNode = parsedData.nodes.find(node => node.level === 0)
+  const nodes = getNodes(level.value)
+  network = new Network(networkRef.value!, { nodes, edges: parsedData.edges }, {
     nodes: {
       labelHighlightBold: false,
       shape: 'box',
@@ -119,10 +153,12 @@ onMounted(async () => {
     },
   })
 
-  network.value?.on('stabilizationIterationsDone', () => {
-    network.value?.setOptions({ physics: nodes.length <= 50 })
+  network?.on('stabilizationIterationsDone', () => {
+    const _nodes = getNodes(level.value)
+
+    network?.setOptions({ physics: _nodes.length <= 50 })
     if (rootNode) {
-      network.value?.focus(rootNode.id!, {
+      network?.focus(rootNode.id!, {
         scale: 0.7,
         animation: {
           duration: 1000,
@@ -136,28 +172,34 @@ onMounted(async () => {
     getPkgInfo(pkg)
   })
 
-  network.value?.on('selectNode', (params) => {
+  network?.on('selectNode', (params) => {
     getPkgInfo(params.nodes[0])
   })
 
-  network.value?.on('deselectNode', () => {
+  network?.on('deselectNode', () => {
     getPkgInfo(pkg)
   })
 })
 
 onUnmounted(() => {
-  network.value?.destroy()
-  network.value = null
+  network?.destroy()
+  network = null
 })
 </script>
 
 <template>
   <div class="flex m-4 gap-4">
     <div class="w-[14rem]">
-      <PkgMeta :meta="pkgMetaData" />
+      <PkgMeta v-model:level="level" :max-level="parsedData.maxLevel" :meta="pkgMetaData" />
     </div>
     <UCard class="flex-1 h-[calc(100vh-6rem)]">
-      <div ref="networkRef" class="h-[calc(100vh-10rem)] w-full" />
+      <div ref="networkRef" class="h-[calc(100vh-10rem)] w-full" :class="loading ? 'opacity-0' : ''" />
+
+      <Overlay :open="loading">
+        <div class="flex items-center justify-center h-full">
+          <UIcon name="i-eos-icons:loading" class="w-8 h-8 text-gray" />
+        </div>
+      </Overlay>
     </UCard>
   </div>
 </template>
