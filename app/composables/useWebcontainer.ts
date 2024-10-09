@@ -39,6 +39,7 @@ export const useWebcontainerStore = defineStore('webcontainer', () => {
     status.value = 'analyse'
     const installExitCode = await spawn('node', ['collect-pkg.mjs', pkg])
     if (installExitCode !== 0) {
+      status.value = 'error'
       error.value = { message: `Unable to run npm install, exit as ${installExitCode}` }
       console.error('Unable to run npm install')
       return false
