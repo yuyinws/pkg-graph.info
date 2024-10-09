@@ -1,5 +1,5 @@
 <script setup lang="ts">
-
+const { isOpen } = storeToRefs(useSlide())
 </script>
 
 <template>
@@ -11,6 +11,7 @@
         color="gray"
         variant="ghost"
         class="md:hidden"
+        @click="isOpen = !isOpen"
       />
 
       <nuxt-link to="/">

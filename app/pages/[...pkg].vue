@@ -1,8 +1,7 @@
 <script setup lang="ts">
 const { status } = storeToRefs(useWebcontainerStore())
 
-const route = useRoute()
-const pkg = (route.params.pkg as string[]).join('/')
+const { pkg } = usePkgName()
 
 useSeoMeta({
   title: `${pkg}'s package-graph`,

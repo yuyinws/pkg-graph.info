@@ -8,7 +8,7 @@ const targetDep = Object.keys(dependencies)[0]
 const pkgLockRaw = readFileSync(new URL('./package-lock.json', import.meta.url), 'utf-8')
 const pkgLock = JSON.parse(pkgLockRaw)
 const packages = pkgLock.packages
-const nodes = new Map() // 将 Set 改为 Map，以存储节点及其级别
+const nodes = new Map()
 const edges = new Set()
 
 function collect(entry, level = 0, visited = new Set()) {

@@ -1,6 +1,9 @@
 export interface PkgMeta {
   name: string
   version: string
+  author: string | {
+    name: string
+  } | undefined
   keywords: string[] | undefined
   description: string
   homepage: string

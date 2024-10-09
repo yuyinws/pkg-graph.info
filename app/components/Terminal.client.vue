@@ -11,8 +11,7 @@ const { status } = storeToRefs(useWebcontainerStore())
 const colorMode = useColorMode()
 const terminalRef = useTemplateRef('terminalRef')
 
-const route = useRoute()
-const pkg = (route.params.pkg as string[]).join('/')
+const { pkg } = usePkgName()
 
 const theme = computed<ITheme>(() => {
   return colorMode.value === 'dark'
@@ -122,7 +121,7 @@ watch(terminalRef, async (value) => {
 <template>
   <Overlay :open="status !== 'finish'">
     <div class="flex items-center justify-center h-full">
-      <div class="flex flex-col w-[40rem] items-center justify-center h-full">
+      <div class="flex flex-col w-[25rem] md:w-[40rem] items-center justify-center h-full">
         <div class="bg-gray-300 w-full rounded-t-[.5rem] flex items-center justify-between">
           <div class="px-5 py-3">
             <div class="flex gap-2">

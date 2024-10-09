@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Graph } from '~~/types/graph'
 import type { PkgMeta } from '~~/types/pkg'
+import chroma from 'chroma-js'
 import { Network } from 'vis-network'
 
 const networkRef = useTemplateRef('networkRef')
@@ -9,58 +10,50 @@ const { webcontainerInstance } = useWebcontainerStore()
 const { status } = storeToRefs(useWebcontainerStore())
 let network: Network | null = null
 
-const route = useRoute()
-const pkg = (route.params.pkg as string[]).join('/')
+const { name } = usePkgName()
 
 const visData = await webcontainerInstance?.fs.readFile('./visData.json', 'utf-8')
 
 const pkgMetaData = ref<PkgMeta>()
 
 async function getPkgInfo(pkg: string) {
+  // FIXME: Nested dependency nuxt fdir
   const pkgInfo = await webcontainerInstance?.fs.readFile(`./node_modules/${pkg}/package.json`, 'utf-8')
   pkgMetaData.value = JSON.parse(pkgInfo!) as PkgMeta
 }
 
 const parsedData = JSON.parse(visData!) as Graph
 
-function hexToRgb(hex: string) {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-  return result
-    ? {
-        r: Number.parseInt(result[1]!, 16),
-        g: Number.parseInt(result[2]!, 16),
-        b: Number.parseInt(result[3]!, 16),
-      }
-    : { r: 0, g: 0, b: 0 }
-}
-
-function getNodeColor(level: number) {
+function getNodeColor(level: number, opacity = 1) {
   const colors = [
-    '#22c55e',
-    '#4ade80',
-    '#86efac',
+    '#15803d',
+    '#6d28d9',
+    '#0369a1',
+    '#374151',
   ]
   const colorIndex = Math.min(level, colors.length - 1)
-  const baseColor = colors[colorIndex]!
+  const baseColor = chroma(colors[colorIndex]!)
 
-  const rgb = hexToRgb(baseColor)
-  return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${level === 0 ? 0.6 : 0.5})`
+  const [_l, c, h] = baseColor.oklch()
+
+  return chroma.oklch(0.7, c, h).mix('#ffff', 1 - opacity).hex()
 }
 
-const level = ref(2)
+const level = ref(Math.min(parsedData.maxLevel, 2))
 
 function getNodes(_level: number): any {
-  return parsedData.nodes.filter(node => node.level! < _level).map((node) => {
+  return parsedData.nodes.filter(node => node.level! <= _level).map((node) => {
     return {
       ...node,
       color: {
-        background: getNodeColor(node.level!),
+        background: getNodeColor(node.level!, 0.3),
+        border: getNodeColor(node.level!, 0.8),
       },
       shape: 'box',
       font: {
         size: node.level === 0 ? 26 : node.level === 1 ? 18 : 14,
         face: 'arial',
-        color: node.level === 0 ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0.5)',
+        color: node.level === 0 ? 'rgba(0,0,0,0.8)' : 'rgba(0,0,0,0.8)',
       },
       borderWidth: node.level === 0 ? 2 : 1,
       margin: 12,
@@ -101,8 +94,65 @@ watch(level, async (value) => {
   }
 })
 
+function moveNetwork(direction: 'left' | 'right' | 'up' | 'down') {
+  const currentPosition = network?.getViewPosition()
+  const moveDistance = 100
+
+  if (currentPosition) {
+    let newX = currentPosition.x
+    let newY = currentPosition.y
+
+    switch (direction) {
+      case 'left':
+        newX -= moveDistance
+        break
+      case 'right':
+        newX += moveDistance
+        break
+      case 'up':
+        newY -= moveDistance
+        break
+      case 'down':
+        newY += moveDistance
+        break
+    }
+
+    network?.moveTo({
+      position: { x: newX, y: newY },
+      animation: {
+        duration: 500,
+        easingFunction: 'easeInOutQuad',
+      },
+    })
+  }
+}
+
+function zoomNetwork(zoomIn: boolean) {
+  const currentScale = network?.getScale() || 1
+  const zoomFactor = 1.5
+
+  const newScale = zoomIn ? currentScale * zoomFactor : currentScale / zoomFactor
+
+  network?.moveTo({
+    scale: newScale,
+    animation: {
+      duration: 500,
+      easingFunction: 'easeInOutQuad',
+    },
+  })
+}
+
+function focus() {
+  network?.focus(name, {
+    scale: 0.7,
+    animation: {
+      duration: 1000,
+      easingFunction: 'easeInOutQuad',
+    },
+  })
+}
+
 onMounted(async () => {
-  const rootNode = parsedData.nodes.find(node => node.level === 0)
   const nodes = getNodes(level.value)
   network = new Network(networkRef.value!, { nodes, edges: parsedData.edges }, {
     nodes: {
@@ -111,7 +161,6 @@ onMounted(async () => {
       borderWidth: 0,
       color: {
         highlight: '#4ade80',
-        border: '#4ade80',
       },
     },
     edges: {
@@ -154,22 +203,12 @@ onMounted(async () => {
   })
 
   network?.on('stabilizationIterationsDone', () => {
-    const _nodes = getNodes(level.value)
-
-    network?.setOptions({ physics: _nodes.length <= 50 })
-    if (rootNode) {
-      network?.focus(rootNode.id!, {
-        scale: 0.7,
-        animation: {
-          duration: 1000,
-          easingFunction: 'easeInOutQuad',
-        },
-      })
-    }
+    network?.setOptions({ physics: false })
+    focus()
 
     status.value = 'finish'
 
-    getPkgInfo(pkg)
+    getPkgInfo(name)
   })
 
   network?.on('selectNode', (params) => {
@@ -177,7 +216,7 @@ onMounted(async () => {
   })
 
   network?.on('deselectNode', () => {
-    getPkgInfo(pkg)
+    getPkgInfo(name)
   })
 })
 
@@ -185,15 +224,48 @@ onUnmounted(() => {
   network?.destroy()
   network = null
 })
+
+const { isOpen } = storeToRefs(useSlide())
 </script>
 
 <template>
   <div class="flex m-4 gap-4">
-    <div class="w-[14rem]">
-      <PkgMeta v-model:level="level" :max-level="parsedData.maxLevel" :meta="pkgMetaData" />
+    <div class="w-[14rem] hidden md:block">
+      <PkgMeta
+        v-model:level="level"
+        :max-level="parsedData.maxLevel"
+        :meta="pkgMetaData"
+      />
     </div>
-    <UCard class="flex-1 h-[calc(100vh-6rem)]">
-      <div ref="networkRef" class="h-[calc(100vh-10rem)] w-full" :class="loading ? 'opacity-0' : ''" />
+
+    <USlideover v-model="isOpen" class="md:hidden block" side="left">
+      <div class="m-4">
+        <PkgMeta
+          v-model:level="level"
+          :max-level="parsedData.maxLevel"
+          :meta="pkgMetaData"
+        />
+      </div>
+    </USlideover>
+
+    <UCard
+      :ui="{
+        body: {
+          base: 'rounded-lg',
+          background: 'bg-gray-50 dark:bg-gray-900',
+          padding: 'p-2 sm:p-2',
+        },
+      }" class="flex-1 h-[calc(100vh-6rem)] relative"
+    >
+      <div ref="networkRef" class="h-[calc(100vh-7rem)] w-full" :class="loading ? 'opacity-0' : ''" />
+
+      <div class="absolute right-4 bottom-4">
+        <GraphActions
+          @move="moveNetwork"
+          @zoom="zoomNetwork"
+          @focus="focus"
+        />
+      </div>
 
       <Overlay :open="loading">
         <div class="flex items-center justify-center h-full">
