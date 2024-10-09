@@ -1,9 +1,9 @@
 <script setup lang="ts">
-const wc = useWebcontainerStore()
+// const wc = useWebcontainerStore()
 
-if (!wc.webcontainerInstance) {
-  await wc.init
-}
+// if (!wc.webcontainerInstance) {
+//   await wc.init
+// }
 </script>
 
 <template>

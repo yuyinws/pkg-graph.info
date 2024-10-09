@@ -36,6 +36,30 @@ const terminal = new Xterm.Terminal({
 const fitAddon = new FitAddon()
 terminal.loadAddon(fitAddon)
 
+async function startProcess() {
+  status.value = 'idle'
+
+  if (!wc.webcontainerInstance) {
+    await wc.init()
+  }
+
+  await wc.cleanProgress()
+
+  const installRes = await wc.launchInstallProcess(pkg)
+  if (!installRes) {
+    status.value = 'error'
+    return
+  }
+  const collectRes = await wc.launchCollectPkgProcess(pkg)
+  if (!collectRes) {
+    status.value = 'error'
+    return
+  }
+  status.value = 'graph'
+
+  // await wc.lanuchInteractiveProgress()
+}
+
 watch(
   () => wc.currentProcess,
   (process) => {
@@ -84,56 +108,46 @@ watch(terminalRef, async (value) => {
     terminal.open(value)
     fitAddon.fit()
 
-    if (!wc.webcontainerInstance) {
-      await wc.init
-    }
-    const installRes = await wc.launchInstallProcess(pkg)
-    if (!installRes) {
-      status.value = 'error'
-      return
-    }
-    const collectRes = await wc.launchCollectPkgProcess(pkg)
-    if (!collectRes) {
-      status.value = 'error'
-      return
-    }
-    status.value = 'graph'
-    await wc.lanuchInteractiveProgress()
+    startProcess()
   }
 }, { immediate: true })
+
+// onMounted(() => {
+//   if (terminalRef.value) {
+//     startProcess()
+//   }
+// })
 </script>
 
 <template>
-  <div>
-    <Overlay :open="status !== 'finish'">
-      <div class="flex items-center justify-center h-full">
-        <div class="flex flex-col w-[40rem] items-center justify-center h-full">
-          <div class="bg-gray-300 w-full rounded-t-[.5rem] flex items-center justify-between">
-            <div class="px-5 py-3">
-              <div class="flex gap-2">
-                <div class="rounded-full h-[.75rem] w-[.75rem] bg-[#ed695e]" />
-                <div class="rounded-full h-[.75rem] w-[.75rem] bg-[#f4be4f]" />
-                <div class="rounded-full h-[.75rem] w-[.75rem] bg-[#61c454]" />
-              </div>
+  <Overlay :open="status !== 'finish'">
+    <div class="flex items-center justify-center h-full">
+      <div class="flex flex-col w-[40rem] items-center justify-center h-full">
+        <div class="bg-gray-300 w-full rounded-t-[.5rem] flex items-center justify-between">
+          <div class="px-5 py-3">
+            <div class="flex gap-2">
+              <div class="rounded-full h-[.75rem] w-[.75rem] bg-[#ed695e]" />
+              <div class="rounded-full h-[.75rem] w-[.75rem] bg-[#f4be4f]" />
+              <div class="rounded-full h-[.75rem] w-[.75rem] bg-[#61c454]" />
             </div>
+          </div>
 
-            <div class="flex items-center">
-              <div class="text-gray-500 font-medium text-sm">
-                <span v-if="status === 'idle'">Starting up</span>
-                <span v-if="status === 'install'">npm install {{ pkg }}</span>
-                <span v-if="status === 'analyse'">Analyzing {{ pkg }}</span>
-                <span v-if="status === 'graph'">Generate graph</span>
-                <span v-if="status === 'error'">Ops, something went wrong</span>
-              </div>
-              <UIcon v-if="status !== 'error'" name="i-eos-icons:three-dots-loading" class="relative top-[.25rem] text-gray-500 w-5 h-5" />
+          <div class="flex items-center">
+            <div class="text-gray-500 font-medium text-sm">
+              <span v-if="status === 'idle'">Starting up</span>
+              <span v-if="status === 'install'">npm install {{ pkg }}</span>
+              <span v-if="status === 'analyse'">Analyzing {{ pkg }}</span>
+              <span v-if="status === 'graph'">Generate graph</span>
+              <span v-if="status === 'error'">Ops, something went wrong</span>
             </div>
-            <div class="w-[3rem]" />
+            <UIcon v-if="status !== 'error'" name="i-eos-icons:three-dots-loading" class="relative top-[.25rem] text-gray-500 w-5 h-5" />
           </div>
-          <div class="w-full bg-gray-200/75 dark:bg-gray-800/75 p-4 rounded-b-[.5rem]">
-            <div ref="terminalRef" class="w-full h-[15.5rem]" />
-          </div>
+          <div class="w-[3rem]" />
+        </div>
+        <div class="w-full bg-gray-200/75 dark:bg-gray-800/75 p-4 rounded-b-[.5rem]">
+          <div ref="terminalRef" class="w-full h-[15.5rem]" />
         </div>
       </div>
-    </Overlay>
-  </div>
+    </div>
+  </Overlay>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <main>
-    <dark-toggle />
+    <HeaderBar />
     <slot />
   </main>
 </template>

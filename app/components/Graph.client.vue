@@ -1,15 +1,28 @@
 <script setup lang="ts">
 import type { Graph } from '~~/types/graph'
+import type { PkgMeta } from '~~/types/pkg'
 import { Network } from 'vis-network'
 
 const networkRef = useTemplateRef('networkRef')
 
 const { webcontainerInstance } = useWebcontainerStore()
 const { status } = storeToRefs(useWebcontainerStore())
+const network = ref<Network | null>(null)
+
+const route = useRoute()
+const pkg = (route.params.pkg as string[]).join('/')
+
+const visData = await webcontainerInstance?.fs.readFile('./visData.json', 'utf-8')
+
+const pkgMetaData = ref<PkgMeta>()
+
+async function getPkgInfo(pkg: string) {
+  const pkgInfo = await webcontainerInstance?.fs.readFile(`./node_modules/${pkg}/package.json`, 'utf-8')
+  pkgMetaData.value = JSON.parse(pkgInfo!) as PkgMeta
+}
 
 onMounted(async () => {
-  const data = await webcontainerInstance?.fs.readFile('./visData.json', 'utf-8')
-  const parsedData = JSON.parse(data!) as Graph
+  const parsedData = JSON.parse(visData!) as Graph
   const getNodeColor = (level: number) => {
     const colors = [
       '#22c55e',
@@ -57,7 +70,7 @@ onMounted(async () => {
     }
   })
 
-  const network = new Network(networkRef.value!, { nodes: nodes as any, edges: parsedData.edges }, {
+  network.value = new Network(networkRef.value!, { nodes: nodes as any, edges: parsedData.edges }, {
     nodes: {
       labelHighlightBold: false,
       shape: 'box',
@@ -106,10 +119,10 @@ onMounted(async () => {
     },
   })
 
-  network.on('stabilizationIterationsDone', () => {
-    network.setOptions({ physics: nodes.length <= 50 })
+  network.value?.on('stabilizationIterationsDone', () => {
+    network.value?.setOptions({ physics: nodes.length <= 50 })
     if (rootNode) {
-      network.focus(rootNode.id!, {
+      network.value?.focus(rootNode.id!, {
         scale: 0.7,
         animation: {
           duration: 1000,
@@ -119,10 +132,32 @@ onMounted(async () => {
     }
 
     status.value = 'finish'
+
+    getPkgInfo(pkg)
   })
+
+  network.value?.on('selectNode', (params) => {
+    getPkgInfo(params.nodes[0])
+  })
+
+  network.value?.on('deselectNode', () => {
+    getPkgInfo(pkg)
+  })
+})
+
+onUnmounted(() => {
+  network.value?.destroy()
+  network.value = null
 })
 </script>
 
 <template>
-  <div ref="networkRef" class="h-screen w-screen" />
+  <div class="flex m-4 gap-4">
+    <div class="w-[14rem]">
+      <PkgMeta :meta="pkgMetaData" />
+    </div>
+    <UCard class="flex-1 h-[calc(100vh-6rem)]">
+      <div ref="networkRef" class="h-[calc(100vh-10rem)] w-full" />
+    </UCard>
+  </div>
 </template>

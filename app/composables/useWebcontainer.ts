@@ -7,7 +7,6 @@ export const useWebcontainerStore = defineStore('webcontainer', () => {
   const webcontainerInstance = shallowRef<Raw<WebContainer>>()
   const status = ref<'idle' | 'error' | 'install' | 'analyse' | 'graph' | 'finish'>('idle')
   const error = shallowRef<{ message: string }>()
-  let _promiseInit: Promise<void> | undefined
 
   const currentProcess = shallowRef<Raw<WebContainerProcess | undefined>>()
 
@@ -25,6 +24,7 @@ export const useWebcontainerStore = defineStore('webcontainer', () => {
 
   async function launchInstallProcess(pkg: string) {
     status.value = 'install'
+    await spawn('cp', ['package.json.tmp', 'package.json'])
     const installExitCode = await spawn('npm', ['install', pkg])
     if (installExitCode !== 0) {
       error.value = { message: `Unable to run npm install, exit as ${installExitCode}` }
@@ -52,33 +52,40 @@ export const useWebcontainerStore = defineStore('webcontainer', () => {
     await spawn('jsh')
   }
 
-  if (import.meta.client) {
-    async function init() {
-      try {
-        const { WebContainer } = await import('@webcontainer/api')
-        const wc = await WebContainer.boot()
-
-        await wc.mount(files)
-        webcontainerInstance.value = wc
-      }
-      catch (error) {
-        console.error(error)
-        status.value = 'error'
-      }
+  async function cleanProgress() {
+    const cleanProgress = await spawn('rm', ['-rf', 'node_modules package-lock.json package.json'])
+    if (cleanProgress !== 0) {
+      status.value = 'error'
+      error.value = { message: `Unable to run rm, exit as ${cleanProgress}` }
+      console.error('Unable to run rm')
+      return false
     }
 
-    _promiseInit = init()
+    return true
+  }
+
+  async function init() {
+    try {
+      const { WebContainer } = await import('@webcontainer/api')
+      const wc = await WebContainer.boot()
+
+      await wc.mount(files)
+      webcontainerInstance.value = wc
+    }
+    catch (error) {
+      console.error(error)
+      status.value = 'error'
+    }
   }
 
   return {
-    get init() {
-      return _promiseInit
-    },
+    init,
     webcontainerInstance,
     status,
     currentProcess,
     launchInstallProcess,
     launchCollectPkgProcess,
     lanuchInteractiveProgress,
+    cleanProgress,
   }
 })

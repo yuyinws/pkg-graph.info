@@ -34,4 +34,12 @@ export default defineNuxtConfig({
       },
     },
   },
+  app: {
+    head: {
+      title: 'pkg-graph | Show dependency graph of a npm package',
+      link: [
+        { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' },
+      ],
+    },
+  },
 })
