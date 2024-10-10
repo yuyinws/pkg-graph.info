@@ -31,7 +31,6 @@
     "eslint": "^9.11.1",
     "nuxt": "^3.13.2",
     "nuxt-module-cli-shortcuts": "^0.0.4",
-    "nuxt-og-image": "^3.0.4",
     "pinia": "^2.2.2",
     "taze": "^0.17.2",
     "theme-vitesse": "^0.8.3",
