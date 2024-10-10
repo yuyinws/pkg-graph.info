@@ -15,9 +15,9 @@ useServerSeoMeta({
   twitterCard: 'summary_large_image',
 })
 
-defineOgImageComponent('Pkg', {
-  pkg,
-})
+// defineOgImageComponent('Pkg', {
+//   pkg,
+// })
 </script>
 
 <template>

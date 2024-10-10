@@ -16,7 +16,7 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@vueuse/nuxt',
     '@pinia/nuxt',
-    'nuxt-og-image',
+    // 'nuxt-og-image',
   ],
   eslint: {
     config: {
@@ -47,7 +47,7 @@ export default defineNuxtConfig({
       ],
     },
   },
-  site: {
-    url: 'https://pkg-graph.info',
-  },
+  // site: {
+  //   url: 'https://pkg-graph.info',
+  // },
 })
