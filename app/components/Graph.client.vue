@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Graph } from '~~/types/graph'
 import type { PkgMeta } from '~~/types/pkg'
+import { useDebounceFn } from '@vueuse/core'
 import chroma from 'chroma-js'
 import { Network } from 'vis-network'
 
@@ -10,7 +11,7 @@ const { webcontainerInstance } = useWebcontainerStore()
 const { status } = storeToRefs(useWebcontainerStore())
 let network: Network | null = null
 
-const { name } = usePkgName()
+const { name, pkg } = usePkgName()
 
 const visData = await webcontainerInstance?.fs.readFile('./visData.json', 'utf-8')
 
@@ -152,6 +153,15 @@ function focus() {
   })
 }
 
+let imageHref = ''
+
+function saveImage() {
+  const link = document.createElement('a')
+  link.href = imageHref
+  link.download = `${pkg}-dependency-graph.png`
+  link.click()
+}
+
 onMounted(async () => {
   const nodes = getNodes(level.value)
   network = new Network(networkRef.value!, { nodes, edges: parsedData.edges }, {
@@ -218,6 +228,10 @@ onMounted(async () => {
   network?.on('deselectNode', () => {
     getPkgInfo(name)
   })
+
+  network.on('afterDrawing', useDebounceFn((ctx) => {
+    imageHref = ctx.canvas.toDataURL('image/png')
+  }, 1000))
 })
 
 onUnmounted(() => {
@@ -235,6 +249,7 @@ const { isOpen } = storeToRefs(useSlide())
         v-model:level="level"
         :max-level="parsedData.maxLevel"
         :meta="pkgMetaData"
+        @save-image="saveImage"
       />
     </div>
 
@@ -244,6 +259,7 @@ const { isOpen } = storeToRefs(useSlide())
           v-model:level="level"
           :max-level="parsedData.maxLevel"
           :meta="pkgMetaData"
+          @save-image="saveImage"
         />
       </div>
     </USlideover>

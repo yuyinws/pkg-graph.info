@@ -6,7 +6,11 @@ const { meta, maxLevel } = defineProps<{
   maxLevel: number
 }>()
 
-const { name } = usePkgName()
+const emit = defineEmits<{
+  (event: 'save-image'): void
+}>()
+
+const { name, pkg } = usePkgName()
 
 const githubUrl = computed(() => {
   if (!meta)
@@ -41,6 +45,12 @@ const dependenciesCount = computed(() => Object.keys(meta?.dependencies || {}).l
 
 const level = defineModel<number>('level')
 const { isOpen } = storeToRefs(useSlide())
+
+const shareUrl = computed(() => {
+  const message = `Check out the dependency graph of ${pkg}`
+  const url = `https://pkg-graph.info/${pkg}`
+  return `https://x.com/intent/tweet?text=${encodeURIComponent(`${message}\n\n${url}`)}`
+})
 </script>
 
 <template>
@@ -165,11 +175,13 @@ const { isOpen } = storeToRefs(useSlide())
           label="Save"
           class="mr-3"
           :trailing="false"
+          @click="emit('save-image')"
         />
 
         <UButton
           target="_blank"
           icon="i-ri:twitter-x-fill"
+          :to="shareUrl"
           size="sm"
           color="black"
           variant="solid"
