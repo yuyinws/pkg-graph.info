@@ -8,11 +8,15 @@ useSeoMeta({
 })
 
 useServerSeoMeta({
-  ogTitle: `pkg-graph ｜ ${pkg}`,
-  twitterTitle: `pkg-graph ｜ ${pkg}`,
+  ogTitle: `${pkg}'s package graph`,
+  twitterTitle: `${pkg}'s package graph`,
   description: `${pkg}'s package graph`,
   ogDescription: `${pkg}'s package graph`,
   twitterCard: 'summary_large_image',
+})
+
+defineOgImageComponent('Pkg', {
+  pkg,
 })
 </script>
 

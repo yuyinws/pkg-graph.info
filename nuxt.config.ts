@@ -16,6 +16,7 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@vueuse/nuxt',
     '@pinia/nuxt',
+    'nuxt-og-image',
   ],
   eslint: {
     config: {
@@ -40,10 +41,13 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
-      title: 'pkg-graph | Show the dependency graph of a npm package',
+      title: 'pkg-graph | Visualize the dependency graph of npm packages.',
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' },
       ],
     },
+  },
+  site: {
+    url: 'https://pkg-graph.info',
   },
 })
