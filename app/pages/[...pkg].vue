@@ -14,10 +14,6 @@ useServerSeoMeta({
   ogDescription: `${pkg}'s package graph`,
   twitterCard: 'summary_large_image',
 })
-
-// defineOgImageComponent('Pkg', {
-//   pkg,
-// })
 </script>
 
 <template>

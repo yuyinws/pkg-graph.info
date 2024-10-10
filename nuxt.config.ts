@@ -16,7 +16,6 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@vueuse/nuxt',
     '@pinia/nuxt',
-    // 'nuxt-og-image',
   ],
   eslint: {
     config: {
@@ -45,9 +44,28 @@ export default defineNuxtConfig({
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' },
       ],
+      meta: [
+        {
+          property: 'og:image',
+          content: 'https://pkg-graph.info/og.png',
+        },
+        {
+          property: 'twitter:image',
+          content: 'https://pkg-graph.info/og.png',
+        },
+        {
+          property: 'twitter:card',
+          content: 'summary_large_image',
+        },
+        {
+          property: 'twitter:title',
+          content: 'Visualize the dependency graph of npm packages.',
+        },
+        {
+          property: 'twitter:domain',
+          content: 'pkg-graph.info',
+        },
+      ],
     },
   },
-  // site: {
-  //   url: 'https://pkg-graph.info',
-  // },
 })

@@ -13,8 +13,6 @@ defineShortcuts({
     },
   },
 })
-
-// defineOgImageComponent('Home')
 </script>
 
 <template>
