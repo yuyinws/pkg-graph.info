@@ -1,75 +1,29 @@
-# Nuxt 3 Minimal Starter
+<p align="center">
+  <img style="width: 200px" src="https://raw.githubusercontent.com/yuyinws/pkg-graph.info/refs/heads/main/public/logo-2.svg">
+</p>
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+> Visualize the dependency graph of npm packages.
 
-## Setup
+## Features
 
-Make sure to install the dependencies:
+-  Collect and analyze the dependency on [WebContainer](https://webcontainers.io/)
 
-```bash
-# npm
-npm install
+- Dark mode and mobile friendly
 
-# pnpm
-pnpm install
+- Deep level support
 
-# yarn
-yarn install
+## Credits
 
-# bun
-bun install
-```
+**Inspired by**
 
-## Development Server
+- https://github.com/anvaka/npmgraph.an
 
-Start the development server on `http://localhost:3000`:
+- https://pkg-size.dev/
 
-```bash
-# npm
-npm run dev
+**Code reference**
 
-# pnpm
-pnpm run dev
+- https://github.com/nuxt/learn.nuxt.com
 
-# yarn
-yarn dev
+- https://github.com/atinux/npm-chart
 
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+- https://github.com/antfu/yak-shaving-map
