@@ -44,7 +44,7 @@ const { isOpen } = storeToRefs(useSlide())
 </script>
 
 <template>
-  <div v-if="meta" class="flex flex-col justify-between h-full pb-5">
+  <div v-if="meta" class="flex flex-col justify-between h-[calc(100vh-6rem)] gap-4">
     <div class="flex flex-col gap-2 overflow-y-auto">
       <div class="flex justify-between w-full">
         <p class="text-xl font-bold">
@@ -129,7 +129,7 @@ const { isOpen } = storeToRefs(useSlide())
         🎉 Zero dependencies 🎉
       </p>
 
-      <div class="flex flex-wrap items-start gap-2 max-h-[calc(100vh-41rem)] overflow-y-auto">
+      <div class="flex flex-wrap items-start gap-2 overflow-y-auto">
         <nuxt-link v-for="(_, key) in meta.dependencies" :key="key" :to="`/${key}`">
           <UBadge color="gray" variant="solid">
             {{ key }}
