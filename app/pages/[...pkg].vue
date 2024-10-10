@@ -14,6 +14,50 @@ useServerSeoMeta({
   ogDescription: `${pkg}'s package graph`,
   twitterCard: 'summary_large_image',
 })
+
+useHead({
+  title: 'Starting up...',
+})
+
+watch(status, (val) => {
+  switch (val) {
+    case 'idle': {
+      useHead({
+        title: 'Starting up...',
+      })
+      break
+    }
+
+    case 'install': {
+      useHead({
+        title: 'Installing...',
+      })
+      break
+    }
+
+    case 'analyse': {
+      useHead({
+        title: 'Analysing...',
+      })
+      break
+    }
+
+    case 'graph': {
+      useHead({
+        title: 'Generate graph...',
+      })
+      break
+    }
+
+    default: {
+      useHead({
+        title: `${pkg}'s package graph`,
+      })
+    }
+  }
+}, {
+  deep: true,
+})
 </script>
 
 <template>
