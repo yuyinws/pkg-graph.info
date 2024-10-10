@@ -1,8 +1,10 @@
 <p align="center">
-  <img style="width: 200px" src="https://raw.githubusercontent.com/yuyinws/pkg-graph.info/refs/heads/main/public/logo-2.svg">
+  <img style="width: 400px" src="https://raw.githubusercontent.com/yuyinws/pkg-graph.info/refs/heads/main/public/logo-2.svg">
 </p>
 
 > Visualize the dependency graph of npm packages.
+
+https://github.com/user-attachments/assets/919699d5-e2f7-46bb-9150-c60c48e18a48
 
 ## Features
 
