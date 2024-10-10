@@ -24,8 +24,20 @@ const fundings = computed(() => {
   if (!meta)
     return undefined
 
-  if (typeof meta.funding === 'string')
-    return [{ type: 'funding', url: meta.funding }]
+  if (typeof meta.funding === 'string') {
+    try {
+      const url = new URL(meta.funding)
+      return [{ type: url.hostname.replace('www.', ''), url: meta.funding }]
+    }
+    catch {
+      return [
+        {
+          type: 'funding',
+          url: meta.funding,
+        },
+      ]
+    }
+  }
 
   if (typeof meta.funding === 'object' && !Array.isArray(meta.funding))
     return [meta.funding]
@@ -77,35 +89,27 @@ const shareUrl = computed(() => {
       </p>
 
       <div class="flex flex-wrap gap-2">
-        <nuxt-link v-if="meta.version" :to="`https://www.npmjs.com/package/${meta.name}`" target="_blank">
-          <UBadge color="gray">
-            <UIcon name="i-mdi:npm-variant-outline" />
-            <span class="ml-1">
-              v{{ meta.version }}
-            </span>
-          </UBadge>
-        </nuxt-link>
+        <UButton :to="`https://www.npmjs.com/package/${meta.name}`" target="_blank" size="xs" color="gray" :ui="{ padding: { xs: 'py-1' } }">
+          <UIcon name="i-mdi:npm-variant-outline" />
+          <span>
+            v{{ meta.version }}
+          </span>
+        </UButton>
 
-        <nuxt-link v-if="meta.homepage" color="gray" :to="meta.homepage" target="_blank">
-          <UBadge color="gray" :to="meta.homepage" target="_blank">
-            <UIcon name="i-heroicons-globe-alt" />
-            <span class="ml-1">homepage</span>
-          </UBadge>
-        </nuxt-link>
+        <UButton v-if="meta.homepage" :to="meta.homepage" target="_blank" size="xs" color="gray" :ui="{ padding: { xs: 'py-1' } }">
+          <UIcon name="i-heroicons-globe-alt" />
+          <span>homepage</span>
+        </UButton>
 
-        <nuxt-link v-if="githubUrl" color="gray" :to="githubUrl" target="_blank">
-          <UBadge color="gray">
-            <UIcon name="i-mdi:github" />
-            <span class="ml-1">GitHub</span>
-          </UBadge>
-        </nuxt-link>
+        <UButton v-if="githubUrl" color="gray" :to="githubUrl" target="_blank" size="xs" :ui="{ padding: { xs: 'py-1' } }">
+          <UIcon name="i-mdi:github" />
+          <span>GitHub</span>
+        </UButton>
 
-        <nuxt-link v-if="name !== meta.name" color="gray" :to="`/${meta.name}`">
-          <UBadge color="gray">
-            <UIcon name="i-ph:graph" />
-            <span class="ml-1">pkg-graph</span>
-          </UBadge>
-        </nuxt-link>
+        <UButton v-if="name !== meta.name" color="gray" :to="`/${meta.name}`" size="xs" :ui="{ padding: { xs: 'py-1' } }">
+          <UIcon name="i-ph:graph" />
+          <span>pkg-graph</span>
+        </UButton>
 
         <UBadge v-show="meta.license" color="gray">
           <UIcon name="i-lineicons:license" />
@@ -124,11 +128,9 @@ const shareUrl = computed(() => {
       </p>
 
       <div class="flex flex-wrap gap-2">
-        <nuxt-link v-for="keyword in meta.keywords" :key="keyword" :to="`https://www.npmjs.com/search?q=${keyword}`" target="_blank">
-          <UBadge :ui="{ rounded: 'rounded-full' }" color="gray" variant="solid">
-            {{ keyword }}
-          </UBadge>
-        </nuxt-link>
+        <UButton v-for="keyword in meta.keywords" :key="keyword" :to="`https://www.npmjs.com/search?q=${keyword}`" target="_blank" size="xs" color="gray" class="rounded-full" :ui="{ padding: { xs: 'py-1' } }">
+          {{ keyword }}
+        </UButton>
       </div>
 
       <p v-show="dependenciesCount > 0" class="text-sm font-semibold text-gray-500 dark:text-gray-400">
@@ -140,11 +142,9 @@ const shareUrl = computed(() => {
       </p>
 
       <div class="flex flex-wrap items-start gap-2 overflow-y-auto">
-        <nuxt-link v-for="(_, key) in meta.dependencies" :key="key" :to="`/${key}`">
-          <UBadge color="gray" variant="solid">
-            {{ key }}
-          </UBadge>
-        </nuxt-link>
+        <UButton v-for="(_, key) in meta.dependencies" :key="key" :to="`/${key}`" size="xs" color="gray" :ui="{ padding: { xs: 'py-1' } }">
+          {{ key }}
+        </UButton>
       </div>
 
       <template v-if="fundings">
@@ -153,17 +153,21 @@ const shareUrl = computed(() => {
         </p>
 
         <div class="flex flex-wrap gap-2">
-          <nuxt-link v-for="funding in fundings" :key="funding.url" :to="funding.url" target="_blank">
-            <UBadge color="gray" variant="solid">
-              {{ funding.type }}
-            </UBadge>
-          </nuxt-link>
+          <UButton v-for="funding in fundings" :key="funding.url" :to="funding.url" target="_blank" size="xs" color="gray" :ui="{ padding: { xs: 'py-1' } }">
+            {{ funding.type }}
+          </UButton>
         </div>
       </template>
     </div>
 
     <div class="flex flex-col w-full gap-4">
-      <span class="text-xs text-gray-500 dark:text-gray-400">Deep level ({{ `${level}/${maxLevel}` }})</span>
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-gray-500 dark:text-gray-400">Deep level ({{ `${level}/${maxLevel}` }})</span>
+        <UTooltip text="The deepest level of dependency shown in the graph" :popper="{ placement: 'top' }">
+          <UIcon name="i-radix-icons:question-mark-circled" class="text-gray-500 dark:text-gray-400" />
+        </UTooltip>
+      </div>
+
       <URange v-model="level" class="flex-1" size="sm" :min="0" :max="maxLevel" :disabled="maxLevel === 0" />
 
       <div class="flex justify-between">

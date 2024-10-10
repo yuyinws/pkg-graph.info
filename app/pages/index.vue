@@ -2,6 +2,17 @@
 const pkg = ref('')
 
 const randomPkgs = useState('randomPkgs', () => randomPkg(5))
+
+defineShortcuts({
+  enter: {
+    usingInput: true,
+    handler: () => {
+      if (pkg.value) {
+        navigateTo(`/${pkg.value}`)
+      }
+    },
+  },
+})
 </script>
 
 <template>
@@ -13,7 +24,7 @@ const randomPkgs = useState('randomPkgs', () => randomPkg(5))
     </p>
 
     <div class="w-[26rem] gap-2 mx-auto mt-[1rem] flex flex-col items-center">
-      <div class="flex w-full">
+      <div class="flex w-full gap-2">
         <UInput
           v-model="pkg"
           icon="i-mdi:npm-variant-outline"
@@ -31,7 +42,7 @@ const randomPkgs = useState('randomPkgs', () => randomPkg(5))
         />
       </div>
 
-      <div class="flex justify-center gap-2 w-full">
+      <div class="flex justify-center gap-2 mt-[.5rem] w-full">
         <UButton
           v-for="pkg in randomPkgs"
           :key="pkg"

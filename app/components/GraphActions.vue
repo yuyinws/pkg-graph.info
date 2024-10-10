@@ -1,5 +1,13 @@
 <script setup lang="ts">
 const emit = defineEmits(['move', 'zoom', 'focus'])
+
+defineShortcuts({
+  'arrowup': () => emit('move', 'up'),
+  'arrowdown': () => emit('move', 'down'),
+  'arrowleft': () => emit('move', 'left'),
+  'arrowright': () => emit('move', 'right'),
+  ' ': () => emit('focus'),
+})
 </script>
 
 <template>

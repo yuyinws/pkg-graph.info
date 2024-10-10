@@ -111,11 +111,9 @@ watch(terminalRef, async (value) => {
   }
 }, { immediate: true })
 
-// onMounted(() => {
-//   if (terminalRef.value) {
-//     startProcess()
-//   }
-// })
+function handleReload() {
+  window.location.reload()
+}
 </script>
 
 <template>
@@ -141,7 +139,17 @@ watch(terminalRef, async (value) => {
             </div>
             <UIcon v-if="status !== 'error'" name="i-eos-icons:three-dots-loading" class="relative top-[.25rem] text-gray-500 w-5 h-5" />
           </div>
-          <div class="w-[3rem]" />
+          <div class="w-[3rem] flex items-center gap-2">
+            <template v-if="status === 'error'">
+              <UTooltip text="Back" :popper="{ placement: 'top' }" :ui="{ background: 'bg-gray-300 dark:bg-gray-700' }">
+                <UIcon name="i-ri:arrow-left-line" class="w-4 h-4 text-gray-500 cursor-pointer" @click="$router.replace('/')" />
+              </UTooltip>
+
+              <UTooltip text="Reload" :popper="{ placement: 'top' }" :ui="{ background: 'bg-gray-300 dark:bg-gray-700' }">
+                <UIcon name="i-ri:loop-right-fill" class="w-4 h-4 text-gray-500 cursor-pointer" @click="handleReload" />
+              </UTooltip>
+            </template>
+          </div>
         </div>
         <div class="w-full bg-gray-300/65 dark:bg-gray-700/65 p-4 rounded-b-[.5rem]">
           <div ref="terminalRef" class="w-full h-[15.5rem]" />
