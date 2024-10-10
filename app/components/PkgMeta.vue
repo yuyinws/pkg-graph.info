@@ -23,6 +23,9 @@ const fundings = computed(() => {
   if (typeof meta.funding === 'string')
     return [{ type: 'funding', url: meta.funding }]
 
+  if (typeof meta.funding === 'object' && !Array.isArray(meta.funding))
+    return [meta.funding]
+
   return meta.funding
 })
 
@@ -126,10 +129,12 @@ const { isOpen } = storeToRefs(useSlide())
         🎉 Zero dependencies 🎉
       </p>
 
-      <div class="flex flex-wrap items-start gap-2 max-h-[calc(100vh-35rem)] overflow-y-auto">
-        <UBadge v-for="(_, key) in meta.dependencies" :key="key" color="gray" variant="solid">
-          {{ key }}
-        </UBadge>
+      <div class="flex flex-wrap items-start gap-2 max-h-[calc(100vh-41rem)] overflow-y-auto">
+        <nuxt-link v-for="(_, key) in meta.dependencies" :key="key" :to="`/${key}`">
+          <UBadge color="gray" variant="solid">
+            {{ key }}
+          </UBadge>
+        </nuxt-link>
       </div>
 
       <template v-if="fundings">

@@ -121,8 +121,8 @@ watch(terminalRef, async (value) => {
 <template>
   <Overlay :open="status !== 'finish'">
     <div class="flex items-center justify-center h-full">
-      <div class="flex flex-col w-[25rem] md:w-[40rem] items-center justify-center h-full">
-        <div class="bg-gray-300 w-full rounded-t-[.5rem] flex items-center justify-between">
+      <div class="flex flex-col w-[23rem] md:w-[40rem] items-center justify-center h-full">
+        <div class="bg-gray-300 dark:bg-gray-800 w-full rounded-t-[.5rem] flex items-center justify-between">
           <div class="px-5 py-3">
             <div class="flex gap-2">
               <div class="rounded-full h-[.75rem] w-[.75rem] bg-[#ed695e]" />
@@ -143,7 +143,7 @@ watch(terminalRef, async (value) => {
           </div>
           <div class="w-[3rem]" />
         </div>
-        <div class="w-full bg-gray-200/75 dark:bg-gray-800/75 p-4 rounded-b-[.5rem]">
+        <div class="w-full bg-gray-300/65 dark:bg-gray-700/65 p-4 rounded-b-[.5rem]">
           <div ref="terminalRef" class="w-full h-[15.5rem]" />
         </div>
       </div>

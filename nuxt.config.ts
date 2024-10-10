@@ -3,6 +3,10 @@ export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4,
   },
+  devServer: {
+    port: 5111,
+    host: '0.0.0.0',
+  },
   modules: [
     '@nuxt/ui',
     ['nuxt-module-cli-shortcuts', {

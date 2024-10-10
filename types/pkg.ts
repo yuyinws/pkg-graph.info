@@ -16,5 +16,8 @@ export interface PkgMeta {
   funding: {
     type: string
     url: string
-  }[] | string | undefined
+  }[] | string | {
+    type: string
+    url: string
+  } | undefined
 }

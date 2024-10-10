@@ -39,7 +39,7 @@ function getNodeColor(level: number, opacity = 1) {
   return chroma.oklch(0.7, c, h).mix('#ffff', 1 - opacity).hex()
 }
 
-const level = ref(Math.min(parsedData.maxLevel, 2))
+const level = ref(Math.min(parsedData.maxLevel, 3))
 
 function getNodes(_level: number): any {
   return parsedData.nodes.filter(node => node.level! <= _level).map((node) => {
