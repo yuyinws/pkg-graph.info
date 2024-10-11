@@ -12,18 +12,39 @@ const { status } = storeToRefs(useWebcontainerStore())
 let network: Network | null = null
 
 const { name, pkg } = usePkgName()
-
-const visData = await webcontainerInstance?.fs.readFile('./visData.json', 'utf-8')
-
 const pkgMetaData = ref<PkgMeta>()
 
-async function getPkgInfo(pkg: string) {
-  // FIXME: Nested dependency nuxt fdir
-  const pkgInfo = await webcontainerInstance?.fs.readFile(`./node_modules/${pkg}/package.json`, 'utf-8')
-  pkgMetaData.value = JSON.parse(pkgInfo!) as PkgMeta
+const visData = await webcontainerInstance?.fs.readFile('./visData.json', 'utf-8')
+const parsedData = JSON.parse(visData!) as Graph
+
+const pkgLockRaw = await webcontainerInstance?.fs.readFile('./package-lock.json', 'utf-8')
+const pkgLock = JSON.parse(pkgLockRaw!)
+async function getNestedPkgInfo(pkg: string) {
+  const packages = pkgLock.packages
+
+  const findPkgPath = Object.keys(packages).find(key => key.includes(`/${pkg}`))
+  if (findPkgPath) {
+    const pkgInfo = await webcontainerInstance?.fs.readFile(`${findPkgPath}/package.json`, 'utf-8')
+    return pkgInfo || ''
+  }
+
+  return ''
 }
 
-const parsedData = JSON.parse(visData!) as Graph
+async function getPkgInfo(pkg: string) {
+  let pkgInfo = ''
+  try {
+    const _pkgInfo = await webcontainerInstance?.fs.readFile(`./node_modules/${pkg}/package.json`, 'utf-8')
+    if (_pkgInfo)
+      pkgInfo = _pkgInfo
+  }
+  catch {
+    // Nested dependency
+    pkgInfo = await getNestedPkgInfo(pkg)
+  }
+
+  pkgMetaData.value = JSON.parse(pkgInfo) as PkgMeta
+}
 
 function getNodeColor(level: number, opacity = 1) {
   const colors = [
@@ -39,8 +60,6 @@ function getNodeColor(level: number, opacity = 1) {
 
   return chroma.oklch(0.7, c, h).mix('#ffff', 1 - opacity).hex()
 }
-
-const level = ref(Math.min(parsedData.maxLevel, 3))
 
 function getNodes(_level: number): any {
   return parsedData.nodes.filter(node => node.level! <= _level).map((node) => {
@@ -67,7 +86,7 @@ function getNodes(_level: number): any {
 }
 
 const loading = ref(false)
-
+const level = ref(Math.min(parsedData.maxLevel, 3))
 watch(level, async (value) => {
   try {
     loading.value = true

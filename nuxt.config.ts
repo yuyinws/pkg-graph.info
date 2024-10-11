@@ -12,7 +12,9 @@ export default defineNuxtConfig({
     ['nuxt-module-cli-shortcuts', {
       rawMode: true,
     }],
-    'unplugin-turbo-console/nuxt',
+    ['unplugin-turbo-console/nuxt', {
+      specifiedEditor: 'cursor',
+    }],
     '@nuxt/eslint',
     '@vueuse/nuxt',
     '@pinia/nuxt',
