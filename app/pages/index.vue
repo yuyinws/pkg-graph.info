@@ -13,6 +13,10 @@ defineShortcuts({
     },
   },
 })
+
+useHead({
+  title: 'pkg-graph | Visualize the dependency graph of npm packages.',
+})
 </script>
 
 <template>
